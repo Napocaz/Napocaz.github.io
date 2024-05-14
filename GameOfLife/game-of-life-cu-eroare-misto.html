@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        td {
+            /* width: 33.33%; */
+            border: 1px solid black;
+            width: 20px;
+            position: relative;
+        }
+
+        td .content {
+            aspect-ratio: 1 / 1;
+            /* background: gold; */
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Game of life</h2>
+
+    <table>
+        <tbody id="corp-game-of-life">
+
+        </tbody>
+    </table>
+    <button onclick="pornesteRepetitiaRapida()">Next move in game</button>
+
+    <script>
+
+        function pornesteRepetitiaRapida() {
+            setInterval(function () {
+                nextMove();
+            }, 200);
+        }
+
+
+        let matrice = []; // 400 x 200
+        for (let i = 0; i < 20; i++) {
+            let rand = [];
+            for (let j = 0; j < 100; j++) {
+                rand.push(0); // adaugam coloanele in rand
+            }
+            matrice.push(rand); // adaugam randul in matrice
+        }
+        console.table(matrice);
+
+
+        function nextMove() {
+            console.log('calculam next move');
+            console.log('__________________');
+            // TODO: pentru fiecare element de pe tabla sa vedem daca ar trebui sa live or die
+            for (let i = 0; i < matrice.length; i++) {
+                for (let j = 0; j < matrice[0].length; j++) {
+                    // fiecare element este matrice[i][j]
+                    let traieste = shouldBeAlive(i, j);
+                    if (traieste) {
+                        matrice[i][j] = 1;
+                    } else {
+                        // is dead
+                        matrice[i][j] = 0;
+                    }
+                }
+            }
+            deseneazaMatriceInTabel();
+        }
+
+        function shouldBeAlive(x, y) {
+            // alert('verificam shouldBeAlive pentru ' + x + ' si ' + y);
+            // matrice[x][y] <- 0 dead 1 alive
+            /*
+                Any live cell with fewer than two live neighbors dies, as if by underpopulation.
+                Any live cell with two or three live neighbors lives on to the next generation.
+                Any live cell with more than three live neighbors dies, as if by overpopulation.
+                Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.*/
+            let catiVeciniVii = 0;
+
+            if (x > 0 && y > 0 && matrice[x - 1][y - 1] == 1) {
+                catiVeciniVii++;
+            }
+            if (x > 0 && matrice[x - 1][y] == 1) {
+                catiVeciniVii++;
+            }
+            if (x > 0 && y + 1 < matrice[0].length && matrice[x - 1][y + 1] == 1) {
+                catiVeciniVii++;
+            }
+            if (y > 0 && matrice[x][y - 1] == 1) {
+                catiVeciniVii++;
+            }
+            if (y + 1 < matrice[0].length && matrice[x][y + 1] == 1) {
+                catiVeciniVii++;
+            }
+            if (y > 0 && x + 1 < matrice.length && matrice[x + 1][y - 1] == 1) {
+                catiVeciniVii++;
+            }
+            if (x + 1 < matrice.length && matrice[x + 1][y] == 1) {
+                catiVeciniVii++;
+            }
+            if (x + 1 < matrice.length && y + 1 < matrice[0].length && matrice[x + 1][y + 1] == 1) {
+                catiVeciniVii++;
+            }
+            if (catiVeciniVii < 2) {
+                return false;
+            }
+            if (catiVeciniVii == 2) {
+                return true;
+
+            }
+            if (catiVeciniVii > 3) {
+                return false;
+            }
+            return true; // pentru fix 3
+
+        }
+
+        // cate randuri sunt = matrice.length
+        // cate coloane sunt = matrice[0].length
+        function deseneazaMatriceInTabel() {
+            let ceOSaDesenam = '';
+            for (let i = 0; i < matrice.length; i++) {
+                ceOSaDesenam += '<tr>';
+                for (let j = 0; j < matrice[i].length; j++) {
+                    if (matrice[i][j] == 0) {
+                        ceOSaDesenam += '<td style="background-color: white;" onclick="transformaPozitie(' + i + ', ' + j + ',1)"><div class="content">.</div></td>'
+                    } else {
+                        ceOSaDesenam += '<td style="background-color: black;"><div class="content">.</div></td>'
+                    }
+                }
+                ceOSaDesenam += '</tr>';
+            }
+            document.getElementById('corp-game-of-life').innerHTML = ceOSaDesenam;
+        }
+        deseneazaMatriceInTabel();
+
+        function transformaPozitie(x, y, numar) {
+            console.log('x y si numar = ', x, y, numar);
+            matrice[x][y] = numar;
+            deseneazaMatriceInTabel();
+        }
+    </script>
+
+</body>
+
+</html>

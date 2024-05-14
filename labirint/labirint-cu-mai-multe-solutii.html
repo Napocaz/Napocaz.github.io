@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Un labirint de rezolvat</h1>
+
+    <table border="1">
+        <tbody id="tbody-pentru-labirint">
+
+        </tbody>
+    </table>
+    <button onclick="clickPeRezolva()">Rezolva</button>
+    <button onclick="clickPeRezolvaRosu()">Rezolva cu rosu</button>
+    <script>
+        let labirint = [
+            [true, true, true, false, false, false, false, true, true, true, false, false],
+            [false, false, true, false, false, true, true, true, false, true, false, false],
+            [false, false, true, true, true, true, false, true, false, true, false, false],
+            [false, false, false, false, false, false, false, true, false, true, false, false],
+            [false, false, false, false, false, true, true, true, true, true, false, false],
+            [false, false, false, false, false, true, false, false, false, true, true, true],
+            [false, false, false, false, false, true, false, false, false, false, false, true],
+            [false, false, false, false, false, false, false, false, false, false, false, true]
+        ];
+
+        let peUndeAmMers = [
+            [false, false, false, false, false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false, false, false, false, false],
+
+        ];
+        console.log(labirint);
+        console.log('--------------');
+        console.table(labirint);
+        function deseneazaTablaInHTML(oMatrice) {
+            document.getElementById('tbody-pentru-labirint').innerHTML = '';
+
+            for (let i = 0; i < oMatrice.length; i++) {
+                let ceApareInTabel = '<tr>';
+
+                for (let j = 0; j < oMatrice[i].length; j++) {
+                    let culoare = 'grey';
+                    if (oMatrice[i][j] == true) {
+                        culoare = 'magenta';
+
+                    }
+                    ceApareInTabel += '<td style="background-color: ' + culoare + ';">' + oMatrice[i][j] + '</td>';
+                }
+                ceApareInTabel += '</tr>';
+                document.getElementById('tbody-pentru-labirint').innerHTML += ceApareInTabel;
+            }
+        }
+        deseneazaTablaInHTML(labirint);
+
+        function deseneazaTablaInHTMLRosuPentruSolutie(matriceaLabirintului, matriceaPeUndeAmMers) {
+            document.getElementById('tbody-pentru-labirint').innerHTML = '';
+            for (let i = 0; i < matriceaLabirintului.length; i++) {
+                let ceApareInTabel = '<tr>';
+                for (let j = 0; j < matriceaLabirintului[i].length; j++) {
+                    let culoare = 'grey';
+
+                    if (peUndeAmMers[i][j] == true) {
+                        culoare = 'red';
+                    } else if (matriceaLabirintului[i][j] == true) {
+                        culoare = 'magenta';
+
+                    }
+                    ceApareInTabel += '<td style="background-color: ' + culoare + ';">' + matriceaLabirintului[i][j] + '</td>';
+                }
+                ceApareInTabel += '</tr>';
+                document.getElementById('tbody-pentru-labirint').innerHTML += ceApareInTabel;
+            }
+
+        }
+
+        function potMergePeXY(oMatrice, peUndeAmMers, x, y) {
+            // ! trebuie sa verificam daca nu cumva suntem in afara labirintului
+            if (x < 0 || y < 0) {
+                return false;
+            }
+            if (x >= oMatrice.length || y >= oMatrice[0].length) {
+                return false;
+            }
+            if (oMatrice[x][y] == false) {
+                return false;
+            }
+            if (peUndeAmMers[x][y] == true) {
+                return false;
+            }
+
+            return true;
+        }
+
+
+        function directie(ml, mpuam, x, y) {
+            if (potMergePeXY(ml, mpuam, x, y)) {
+                let rezultat = rezolvaLabirintBktr(ml, mpuam, x, y);
+                if (rezultat == true) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function rezolvaLabirintBktr(oMatrice, peUndeAmMers, pozCurentaRand, pozCurentaCol) {
+            console.log('rezolvam labirintul!!');
+            console.table(oMatrice);
+            if (pozCurentaRand == 7 && pozCurentaCol == 11) { // HC
+                return true;
+            }
+
+            // TODO: cum am putea sa vizitam TOATE solutiile?
+            peUndeAmMers[pozCurentaRand][pozCurentaCol] = true;
+            // verificam daca putem merge sus, jos, dreapta, stanga
+            // sus
+            let rezultatSus = directie(oMatrice, peUndeAmMers, pozCurentaRand - 1, pozCurentaCol);
+
+            // jos
+            let rezultatJos = directie(oMatrice, peUndeAmMers, pozCurentaRand + 1, pozCurentaCol);
+       
+            // stanga
+            let rezultatStanga = directie(oMatrice, peUndeAmMers, pozCurentaRand, pozCurentaCol - 1);
+            
+
+            // dreapta
+            let rezultatDreapta = directie(oMatrice, peUndeAmMers, pozCurentaRand, pozCurentaCol + 1);
+           
+
+          
+            // if (rezultatJos == true) {
+            //     return true;
+            // }
+            // if (rezultatStanga == true) {
+            //     return true;
+            // }
+            // if (rezultatDreapta == true) {
+            //     return true;
+            // }
+
+            peUndeAmMers[pozCurentaRand][pozCurentaCol] = false; // face algoritmul nostru sa se intoarca cand nu mai are pe unde sa mearga
+            if (rezultatSus == true || rezultatJos || rezultatStanga || rezultatDreapta) {
+                return true;
+            }
+            // rezolvaLabirintBktr(oMatrice); // 
+            return false; // suntem intr-un punct in care nu avem ce face
+        }
+
+        function clickPeRezolva() {
+            rezolvaLabirintBktr(labirint, peUndeAmMers, 0, 0); // HC
+            deseneazaTablaInHTML(peUndeAmMers);
+        }
+
+
+        function clickPeRezolvaRosu() {
+            rezolvaLabirintBktr(labirint, peUndeAmMers, 0, 0);
+            // deseneazaTablaInHTML(peUndeAmMers);
+            console.log('=========================================');
+            console.table(labirint);
+            console.table(peUndeAmMers);
+            deseneazaTablaInHTMLRosuPentruSolutie(labirint, peUndeAmMers);
+        }
+
+    </script>
+</body>
+
+</html>

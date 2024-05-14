@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        td {
+            border: 1px solid black;
+            height: 90px;
+            width: 90px;
+        }
+
+        span#numar-ramas {
+            color: blue;
+        }
+        body{
+            background-color: grey;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Aici vom desena <span style="color: red;">tabla</span> de sah</h1>
+    <div>
+        Aici poti juca <span>SAH!</span>
+    </div>
+    <div>
+        Mai poti pune <span id="numar-ramas">8</span> ture
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>a</th>
+                <th>b</th>
+                <th>c</th>
+                <th>d</th>
+                <th>e</th>
+                <th>f</th>
+                <th>g</th>
+                <th>h</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+
+        let jucator = {
+            nume: 'Johnny',
+            varsta: 33
+        };
+
+        // let rand1 = [false, false, false, false, true, false, false, false];
+        // let rand2 = [false, true, false, false, false, false, false, false];
+        // let rand3 = [false, false, false, true, false, false, false, false];
+        // let rand4 = [false, false, false, false, false, false, false, false];
+        // let rand5 = [false, false, false, false, false, false, false, false];
+        // let rand6 = [false, false, false, false, false, false, false, false];
+        // let rand7 = [false, false, false, false, false, false, false, false];
+        // let rand8 = [false, false, false, false, false, false, false, false];
+        // let tabla = [rand1, rand2, rand3, rand4, rand5, rand6, rand7, rand8]; // un array de array-uri
+
+        // matrice (array de arrays) - 2D
+        let tabla = [
+            [false, false, false, false, false, false, false, false], // <tr><td>false</td><td>false</td>
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false]
+        ];
+        console.log('TEST: ' + tabla.length);
+        console.log('---------------------------------------');
+        // console.log('a treia regina: ' + rand3[3]);
+        // console.log('a treia regina: ' + tabla[2][3]);
+
+
+        // potDesenaPeXY(0, 1)  -> ar trebui sa intoarca false pentru ca mai avem una pe rand
+        /**
+         * Functia intoarce true daca putem pune o tura pe coordonatele x si y din tabla, false otherwise
+         * 
+         * x - reprezinta randul pe care vrem sa punem tura
+         * y - reprezinta coloana pe care vrem sa punem tura
+         *  */
+        function potDesenaPeXY(x, y) {
+            let potPune = true;
+            let avemReginaPeRand = false;
+            let avemReginaPeColoana = false;
+
+            for (let i = 0; i < tabla.length; i++) { // pe acelasi rand
+                if (tabla[x][i] == true) {
+                    avemReginaPeRand = true;
+                }
+            }
+            for (let i = 0; i < tabla.length; i++) { // pe aceeasi coloana
+                if (tabla[i][y] == true) {
+                    avemReginaPeColoana = true;
+                }
+            }
+
+            if (avemReginaPeColoana == true || avemReginaPeRand == true) {
+                potPune = false;
+            }
+
+            return potPune;
+        }
+
+        function deseneazaTablaInHTML() {
+            document.querySelector('tbody').innerHTML = ''; // resetam tbody
+            for (let i = 0; i < tabla.length; i++) { // i<- 0..8 RANDURI
+                console.log('TEST: ', tabla[i]); // ne arata fiecare rand
+                // varianta "muncitoreasca"
+                //let ceApareInTabel = '<tr><td>'+tabla[i][0]+'</td><td>'+tabla[i][1]+'</td><td>'+tabla[i][2]+'</td><td>'+tabla[i][3]+'</td><td>'+tabla[i][4]+'</td><td>'+tabla[i][5]+'</td><td>'+tabla[i][6]+'</td><td>'+tabla[i][7]+'</td></tr>';
+                //document.querySelector('table').innerHTML += ceApareInTabel;
+                // varianta "lazy" <- good
+                let ceApareInTabel = '<tr>';
+                ceApareInTabel += '<td>' + (8 - i) + '</td>';
+
+                let peRandulAcestaAvemORegina = false;
+                // ???
+                for (let j = 0; j < tabla[i].length; j++) {
+                    if (tabla[i][j] == true) {
+                        peRandulAcestaAvemORegina = true;
+                    }
+                }
+
+
+                let culoare = 'white';
+                if (peRandulAcestaAvemORegina == true) {
+                    culoare = 'red';
+                }
+
+                for (let j = 0; j < tabla[i].length; j++) { // j<- 0..8 COLOANA CU COLOANA DE PE RANDUL CURENT
+
+
+                    // aici trebuie sa verificam daca deasupra celulei de pe randul i, coloana j AVEM un true in tabla
+                    let peColoanaAvemORegina = false;
+                    for (let k = 0; k < 8; k++) {   // ca sa vedem daca avem o "tura" pe aceeasi coloana -> pe coloana j!!!!
+                        if (tabla[k][j] == true) {
+                            peColoanaAvemORegina = true;
+                            break;
+                        }
+                    }
+                    if (peColoanaAvemORegina == true || peRandulAcestaAvemORegina == true) {
+                        culoare = 'red';
+                    } else {
+                        culoare = 'white';
+                    }
+
+                    if (tabla[i][j] == false) {
+                        //tabla[i][j].
+                        ceApareInTabel += '<td onclick="clickPeTdDinTabla(' + i + ', ' + j + ')" style="background-color: ' + culoare + ';">' + tabla[i][j] + '</td>';
+                    } else {
+                        // background color green
+                        // document.querySelectorAll('td')[i*9+j].style.backgroundColor = 'green';
+                        ceApareInTabel += '<td onclick="clickPeTdDinTabla(' + i + ', ' + j + ')" style="background-color: green;">' + tabla[i][j] + '</td>';
+                        // daca e unul true toate de pe acelasi rand ar trebui sa fie RED
+                    }
+                }
+                ceApareInTabel += '</tr>';
+                document.querySelector('tbody').innerHTML += ceApareInTabel;
+            }
+        }
+        deseneazaTablaInHTML();
+
+
+        // console.log('test', i); // nu putem, i "apartinea" for-ului
+        function clickPeTdDinTabla(paramI, paramJ) {
+            console.log('ai dat click pe o celula: ', paramI, paramJ);
+            console.log('in celula ai valoarea: ', tabla[paramI][paramJ]);
+
+
+
+            // daca e true -> devine false
+            // daca e false -> devine true
+            let dacaPoti = potDesenaPeXY(paramI, paramJ);
+            if (dacaPoti) {
+
+                // iau numarul scris in pagina, scad unu, il pun la loc
+                let ceEScrisInSpanulNumarRamas = document.querySelector("span#numar-ramas").innerHTML; // iau numarul scris in pagina
+                console.log('CE E SCRIS IN SPAN: ', ceEScrisInSpanulNumarRamas);
+                ceEScrisInSpanulNumarRamas--; // scad unu
+                console.log('CE AR TREBUI SA SCRIE IN SPAN: ', ceEScrisInSpanulNumarRamas);
+                // return eEScrisInSpanulNumarRamas;
+                document.querySelector("span#numar-ramas").innerHTML = ceEScrisInSpanulNumarRamas; // il pun la loc
+
+                if (tabla[paramI][paramJ] == true) { // aici, nu ar trebui sa facem asta DACA NU PUTEM FACE ASTA
+                    tabla[paramI][paramJ] = false;
+                } else {
+                    tabla[paramI][paramJ] = true;
+                }
+                deseneazaTablaInHTML();
+            } 
+            console.log('DUPA ce ai dat click, tabla arata asa:');
+            console.log(tabla);
+            console.log('-------------------------');
+            // dupa ce schimbam tabla => dorim sa se execute inca o data "desenatul"
+        }
+        // console.log('test 2: ', paramI); // nu putem, paramI "apartinea" functiei clickPeTdDinTabla
+
+        // colorare tabla de sah
+        // for(let i=0; i<tabla.length; i++){
+        //     for(let j=0; j<tabla[i].length; j++){
+        //         document.querySelectorAll('td')[i*9+j+1].style.backgroundColor = 'yellow';
+        //     }
+        // }
+
+
+
+
+    </script>
+</body>
+
+</html>

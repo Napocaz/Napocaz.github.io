@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+                td {
+            border: 1px solid black;
+            height: 90px;
+            width: 90px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Diagonale</h1>
+    <div>
+        Mai poti pune <span id="cat-mai-poti-pune">8</span> nebuni
+    </div>
+    <table border="1">
+        <tbody>
+
+        </tbody>
+    </table>
+
+    <script>
+     
+
+        let oMatrice = [
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false]
+        ];
+
+        function afisareMatrice(){
+            for(let i=0; i<oMatrice.length; i++){
+                console.log(oMatrice[i]);
+            }
+        }
+
+        // TODO: de afisat cu rosu unde ataca nebunii plox!!!
+
+        // functia asta DOAR deseneaza
+        function deseneazaTablaInHTML(){
+            document.querySelector('tbody').innerHTML = ''; 
+            
+            for(let i=0; i<oMatrice.length; i++){
+                    let ceApareInTabel = '<tr>';
+                    
+                    for (let j = 0; j < oMatrice.length; j++) {
+                        let culoare = 'white';
+                        if(oMatrice[i][j] == true){
+                            culoare = 'green';
+                        }else if(potPuneNebunPeXY(i,j) == false){ // oMatrice[i][j] == false <- ar face toata tabla unde nu avem true, sa fie false
+                            culoare = 'red';
+                        }
+                        ceApareInTabel += '<td style="background-color: '+culoare+';" onclick="clickPeElementDePeXY('+i+','+j+')">'+oMatrice[i][j]+'</td>';
+                    }
+                ceApareInTabel += '</tr>';
+                document.querySelector('tbody').innerHTML += ceApareInTabel;
+            }
+        }
+        deseneazaTablaInHTML();
+
+
+        // verifica diagonalele - daca este punctul x,y atacat
+        function potPuneNebunPeXY(x, y){
+            for(let i=0; i<oMatrice.length && x+i < oMatrice.length && y+i < oMatrice.length; i++){
+                if(oMatrice[x+i][y+i] == true){
+                    return false;
+                }
+            }
+            
+            let minim = 0;
+            if(x < y){
+                minim = x;
+            }else{
+                minim = y;
+            }
+            for(let i=0; i<=minim; i++){
+                if(oMatrice[x-i][y-i] == true){
+                    return false;
+                }
+            }
+
+
+            // x creste y scade
+            for(let i=0; i<oMatrice.length && x+i < oMatrice.length && y-i >= 0; i++){
+                if(oMatrice[x+i][y-i] == true){
+                    return false;
+                }
+            }
+
+            // x scade y creste
+            for(let i=0; i<oMatrice.length && y+i < oMatrice.length && x-i >= 0; i++){
+                if(oMatrice[x-i][y+i] == true){
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function clickPeElementDePeXY(x, y){
+            if(potPuneNebunPeXY(x,y) == true){
+                let catiSunt = document.getElementById('cat-mai-poti-pune').innerHTML;
+                console.log('CATI SUNT DEJA: ', catiSunt);
+                let catiVorFi = catiSunt - 1;
+                if(catiVorFi < 0){
+                    alert('NU MAI POTI PUNE NEBVNI');
+                    return;
+                }
+                console.log('CATI VOR FI: ', catiVorFi);
+                document.getElementById('cat-mai-poti-pune').innerHTML = catiVorFi;
+            }
+            console.log('AI DAT CLICK PE: ' + x + ' si ' + y);
+            afisareMatrice();
+            // pe randul x am vrea sa inlocuim totul cu -1
+            //schimbaRandInMinusOne(x);
+            schimbaDiagonalele(x,y);
+            afisareMatrice(); // matrice in consola
+            deseneazaTablaInHTML(); // matricea in tabel
+        }
+
+        // function schimbaRandInMinusOne(randulX){
+        //     for (let i=0; i<oMatrice.length; i++){
+        //        oMatrice[randulX][i] = -1
+        //     }
+        // }
+
+        // function schimbaColoanaInMinusOne(coloanaY){
+        //     // TODO: !!!!
+        //     for (let i=0; i<oMatrice.length; i++){
+        //        oMatrice[i][coloanaY] = -1
+        //     }
+        // }
+
+        // function schimbaDiagonalaPrincipalaInMinusOne(){
+        //     for(let i=0; i<oMatrice.length; i++){
+        //         oMatrice[i][i] = -1;
+        //     }
+        // }
+
+        function schimbaDiagonalele(x, y){
+            // for(let i=0; i<oMatrice.length; i++){
+            //     oMatrice[i][i] = -1;
+            // }
+            if(potPuneNebunPeXY(x, y) == true){
+                oMatrice[x][y] = true;
+            }else{
+                alert('Nu poti pune acolo nebun!');
+            }
+            // for(let i=0; i<oMatrice.length && x+i < oMatrice.length && y+i < oMatrice.length; i++){
+            //     oMatrice[x+i][y+i] = true;
+            // }
+            
+            // let minim = 0;
+            // if(x < y){
+            //     minim = x;
+            // }else{
+            //     minim = y;
+            // }
+            // for(let i=0; i<=minim; i++){
+            //     oMatrice[x-i][y-i] = true;
+            // }
+
+
+            // // x creste y scade
+            // for(let i=0; i<oMatrice.length && x+i < oMatrice.length && y-i >= 0; i++){
+            //     oMatrice[x+i][y-i] = true;
+            // }
+
+            // // x scade y creste
+            // for(let i=0; i<oMatrice.length && y+i < oMatrice.length && x-i >= 0; i++){
+            //     oMatrice[x-i][y+i] = true;
+            // }
+
+
+            // TODO: 
+            // for (let i=0; i<oMatrice.length; i++){
+            //     for (let j=0; j<oMatrice.length; j++){
+            //    oMatrice[j][coloanaY] = -1
+            // }
+            // oMatrice[randulX][i] = -1
+            // }
+        }
+
+        // let unRand = '<tr>';
+        // for(let i=0; i<3; i++){
+        //     unRand += '<td>CEVA</td>';
+        // }
+        // unRand += '</tr>';
+
+        // document.querySelector('tbody').innerHTML = unRand;
+
+        // let oMatrice = [];
+        // oMatrice.push([1,2,3,4]);
+        // oMatrice.push([5,6,7,8]);
+        
+        // let numeLista = ['joe', 'jack'];
+        // numeLista.push('jim');
+
+    </script>
+</body>
+</html>

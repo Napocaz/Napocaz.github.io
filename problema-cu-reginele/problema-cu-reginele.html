@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+                td {
+            border: 1px solid black;
+            height: 90px;
+            width: 90px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Diagonale</h1>
+    <div>
+        Mai poti pune <span id="cat-mai-poti-pune">8</span> regine
+    </div>
+    <button onclick="clickPeBtnPlayAgain()">Play again</button>
+    <button onclick="rezolvaProblemaCuRegineleBot()">dumb AI</button>
+    <table border="1">
+        <tbody>
+
+        </tbody>
+    </table>
+
+    <script>
+     
+
+        function clickPeBtnPlayAgain(){
+            console.log('PLAY AGAIN');
+            console.log('-----------');
+            // stop rezolvaProblemaCuRegineleBot()
+            for(let i=0; i<oMatrice.length; i++){
+                for(let j=0; j<oMatrice[i].length; j++){
+                    oMatrice[i][j] = false;
+                }
+            }
+            
+            console.log('DUPA GOLIRE MATRICE: ');
+            console.log(oMatrice);
+            document.getElementById('cat-mai-poti-pune').innerHTML = 8;
+            deseneazaTablaInHTML(); 
+        }
+
+        let oMatrice = [
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false]
+        ];
+
+        function afisareMatrice(){
+            for(let i=0; i<oMatrice.length; i++){
+                console.log(oMatrice[i]);
+            }
+        }
+
+        // TODO: de afisat cu rosu unde ataca nebunii plox!!!
+
+        // functia asta DOAR deseneaza
+        function deseneazaTablaInHTML(){
+            document.querySelector('tbody').innerHTML = ''; 
+            
+            for(let i=0; i<oMatrice.length; i++){
+                    let ceApareInTabel = '<tr>';
+                    
+                    for (let j = 0; j < oMatrice.length; j++) {
+                        let culoare = 'white';
+                        if(oMatrice[i][j] == true){
+                            culoare = 'green';
+                        }else if(potPuneNebunPeXY(i,j) == false || potPuneTuraPeXY(i,j) == false){ // oMatrice[i][j] == false <- ar face toata tabla unde nu avem true, sa fie false
+                            culoare = 'red';
+                        }
+                        ceApareInTabel += '<td style="background-color: '+culoare+';" onclick="clickPeElementDePeXY('+i+','+j+')">'+oMatrice[i][j]+'</td>';
+                    }
+                ceApareInTabel += '</tr>';
+                document.querySelector('tbody').innerHTML += ceApareInTabel;
+            }
+        }
+        deseneazaTablaInHTML();
+
+        function potPuneTuraPeXY(x, y) {
+            let potPune = true;
+            let avemReginaPeRand = false;
+            let avemReginaPeColoana = false;
+
+            for (let i = 0; i < oMatrice.length; i++) { // pe acelasi rand
+                if (oMatrice[x][i] == true) {
+                    avemReginaPeRand = true;
+                }
+            }
+            for (let i = 0; i < oMatrice.length; i++) { // pe aceeasi coloana
+                if (oMatrice[i][y] == true) {
+                    avemReginaPeColoana = true;
+                }
+            }
+
+            if (avemReginaPeColoana == true || avemReginaPeRand == true) {
+                potPune = false;
+            }
+
+            return potPune;
+        }
+
+        // verifica diagonalele - daca este punctul x,y atacat
+        function potPuneNebunPeXY(x, y){
+            for(let i=0; i<oMatrice.length && x+i < oMatrice.length && y+i < oMatrice.length; i++){
+                if(oMatrice[x+i][y+i] == true){
+                    return false;
+                }
+            }
+            
+            let minim = 0;
+            if(x < y){
+                minim = x;
+            }else{
+                minim = y;
+            }
+            for(let i=0; i<=minim; i++){
+                if(oMatrice[x-i][y-i] == true){
+                    return false;
+                }
+            }
+
+
+            // x creste y scade
+            for(let i=0; i<oMatrice.length && x+i < oMatrice.length && y-i >= 0; i++){
+                if(oMatrice[x+i][y-i] == true){
+                    return false;
+                }
+            }
+
+            // x scade y creste
+            for(let i=0; i<oMatrice.length && y+i < oMatrice.length && x-i >= 0; i++){
+                if(oMatrice[x-i][y+i] == true){
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function potPuneReginaPeXY(x, y){
+            if(potPuneNebunPeXY(x,y) == true && potPuneTuraPeXY(x,y) == true){
+                return true;
+            } 
+            return false;
+        }
+
+        function clickPeElementDePeXY(x, y){
+            if(potPuneReginaPeXY(x,y) == true){
+                let catiSunt = document.getElementById('cat-mai-poti-pune').innerHTML;
+                console.log('CATI SUNT DEJA: ', catiSunt);
+                let catiVorFi = catiSunt - 1;
+                if(catiVorFi < 0){
+                    // alert('NU MAI POTI PUNE REGINE');
+                    console.log('NU POTI DA CLICK ACOLO LOL');
+                    return;
+                }
+                console.log('CATI VOR FI: ', catiVorFi);
+                document.getElementById('cat-mai-poti-pune').innerHTML = catiVorFi;
+            }
+            schimbaDiagonaleleSiColSiRand(x,y);
+            deseneazaTablaInHTML(); // matricea in tabel
+        }
+
+        function puneReginaPeXY(x, y, nrSecunde){
+            setTimeout(function(){
+                console.log('PUNEM REGINA PE ' + x + ' ' + y);
+                console.log('------------------------------');
+                clickPeElementDePeXY(x,y);
+            }, nrSecunde * 3 * 10);
+        }
+
+        function rezolvaProblemaCuRegineleBot(){
+            // functia asta, fiind bot, vrem sa do the clicky stuff for us
+            let numarCurentSecunde = 0;
+            for(let i=0; i<oMatrice.length; i++){ // for-ul asta merge de 8 ori pentru ca sunt 8 regine
+                
+                for(let r=0; r<oMatrice.length; r++){
+                    for(let c=0; c<oMatrice[i].length; c++){
+                        puneReginaPeXY(r,c, numarCurentSecunde++)
+
+                    }
+                }
+
+            }
+        }
+        // rezolvaProblemaCuRegineleBot();
+
+        
+
+        function schimbaDiagonaleleSiColSiRand(x, y){
+            if(potPuneNebunPeXY(x, y) == true && potPuneTuraPeXY(x, y) == true){
+                oMatrice[x][y] = true;
+            }else{
+                console.log('Nu poti pune acolo regina!');
+            }
+           
+        }
+
+        // TODO: de jucat cu reginele ca sa le poti pune pe toate 8 please screenshot
+
+        
+
+    </script>
+</body>
+</html>
